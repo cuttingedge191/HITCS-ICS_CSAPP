@@ -1,0 +1,34 @@
+***:~/Bomb Lab$ gdb bomb
+(gdb) break strings_not_equal
+Breakpoint 1 at 0x401338
+(gdb) break string_length
+Breakpoint 2 at 0x40131b
+(gdb) break explode_bomb
+Breakpoint 3 at 0x40143a
+(gdb) run
+Starting program: ~/bomb 
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Test input.
+
+Breakpoint 1, 0x0000000000401338 in strings_not_equal ()
+(gdb) x/s 0x402400
+0x402400:	"Border relations with Canada have never been better."
+(gdb) c
+Continuing.
+
+Breakpoint 2, 0x000000000040131b in string_length ()
+(gdb) x/s $rdi
+0x603780 <input_strings>:	"Test input."
+(gdb) c
+Continuing.
+
+Breakpoint 2, 0x000000000040131b in string_length ()
+(gdb) print /d $r12d
+$1 = 11
+(gdb) c
+Continuing.
+
+Breakpoint 3, 0x000000000040143a in explode_bomb ()
+--------------------------------------------------------
+
