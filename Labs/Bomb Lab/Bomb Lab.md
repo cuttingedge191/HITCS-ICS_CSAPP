@@ -104,7 +104,7 @@ Breakpoint 2, 0x000000000040131b in string_length ()
 $1 = 11                                                               （输入串长）
 ```
 
-**答案： Border relations with Canada have never been better. **
+**答案： Border relations with Canada have never been better.**
 
 ### Phase 2：
 
