@@ -31,4 +31,22 @@ Continuing.
 
 Breakpoint 3, 0x000000000040143a in explode_bomb ()
 --------------------------------------------------------
-
+(gdb) x/s 0x4025cf
+0x4025cf:	"%d %d"
+(跳转地址数组）
+(gdb) print /x *0x402470
+$0 = 0x400f7c
+(gdb) print /x *(0x402470 + 0x8)
+$1 = 0x400fb9
+(gdb) print /x *(0x402470 + 0x10)
+$2 = 0x400f83
+(gdb) print /x *(0x402470 + 0x18)
+$3 = 0x400f8a
+(gdb) print /x *(0x402470 + 0x20)
+$4 = 0x400f91
+(gdb) print /x *(0x402470 + 0x28)
+$5 = 0x400f98
+(gdb) print /x *(0x402470 + 0x30)
+$6 = 0x400f9f
+(gdb) print /x *(0x402470 + 0x38)
+$7 = 0x400fa6
