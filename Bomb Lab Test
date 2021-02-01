@@ -50,3 +50,14 @@ $5 = 0x400f98
 $6 = 0x400f9f
 (gdb) print /x *(0x402470 + 0x38)
 $7 = 0x400fa6
+------------------------------------------
+So you got that one.  Try this one.
+test12
+
+Breakpoint 1, 0x000000000040143a in explode_bomb ()
+(gdb) x/s 0x4024b0
+0x4024b0 <array.3449>:	"maduiersnfotvbylSo you think you can stop the bomb with ctrl-c, do you?"
+(gdb) x/s 0x40245e
+0x40245e:	"flyers"
+对应各字符与0xf与运算的结果（地址偏移量）:9 15 14 5 6 7
+转换为对应字符表示：9 ? > 5 6 7
