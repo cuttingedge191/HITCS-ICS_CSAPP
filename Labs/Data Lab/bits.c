@@ -1,7 +1,7 @@
 /* 
  * CS:APP Data Lab 
  * 
- * <Please put your name and userid here>
+ * <*** cuttingedge191>
  * 
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
@@ -75,18 +75,18 @@ EXAMPLES OF ACCEPTABLE CODING STYLE:
    * pow2plus1 - returns 2^x + 1, where 0 <= x <= 31
    */
   int pow2plus1(int x) {
-     /* exploit ability of shifts to compute powers of 2 */
-     return (1 << x) + 1;
+      /* exploit ability of shifts to compute powers of 2 */
+      return (1 << x) + 1;
   }
 
   /*
    * pow2plus4 - returns 2^x + 4, where 0 <= x <= 31
    */
   int pow2plus4(int x) {
-     /* exploit ability of shifts to compute powers of 2 */
-     int result = (1 << x);
-     result += 4;
-     return result;
+      /* exploit ability of shifts to compute powers of 2 */
+      int result = (1 << x);
+      result += 4;
+      return result;
   }
 
 FLOATING POINT CODING RULES
@@ -142,8 +142,11 @@ NOTES:
  *   Max ops: 14
  *   Rating: 1
  */
+//位异或的实现
 int bitXor(int x, int y) {
-  return 2;
+  	return ~(~(x & ~y) & ~(~x & y));
+  	//另一解：
+  	//return ~(x & y) & ~(~x & ~y);
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -151,10 +154,9 @@ int bitXor(int x, int y) {
  *   Max ops: 4
  *   Rating: 1
  */
+//返回补数最小值（TMin）
 int tmin(void) {
-
-  return 2;
-
+  	return 1 << 31;
 }
 //2
 /*
@@ -164,8 +166,16 @@ int tmin(void) {
  *   Max ops: 10
  *   Rating: 1
  */
+//判断x是否为TMax
+//思路：利用TMax + 1 = TMin, TMin + TMax = 0xFFFFFFFF, !(0xFFFFFFFF) = 0
+//注意：需要排除的x = -1的情况
 int isTmax(int x) {
-  return 2;
+	int t = x + 1;
+	x = x + t;
+	x = ~x;
+	t = !t;  //排除-1的情况
+	x = x + t;
+  	return !x;
 }
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
@@ -175,8 +185,13 @@ int isTmax(int x) {
  *   Max ops: 12
  *   Rating: 2
  */
+//判断一个数是否所有偶数位均为1
+//思路：类似掩码
 int allOddBits(int x) {
-  return 2;
+	int t1 = 0xAA << 8;
+	int t2 = t1 + 0xAA;
+	int t = (t2 << 16) + t2;
+	return !((x & t) ^ t);
 }
 /* 
  * negate - return -x 
@@ -185,8 +200,9 @@ int allOddBits(int x) {
  *   Max ops: 5
  *   Rating: 2
  */
+//数取负操作
 int negate(int x) {
-  return 2;
+  	return ~x + 1;
 }
 //3
 /* 
@@ -198,8 +214,14 @@ int negate(int x) {
  *   Max ops: 15
  *   Rating: 3
  */
+//Ascii范围判断
 int isAsciiDigit(int x) {
-  return 2;
+	int e1 = !((x >> 4) ^ 0x3);  //检测高28位
+	int e2 = x & 0xF;            //取低4位
+	int e3 = e2 & 0x8;           //取第4位
+	int e4 = !(e2 & 0x6);        //检测是否超出9
+	int r = e1 & ((!e3) | e4);
+  	return r;
 }
 /* 
  * conditional - same as x ? y : z 
@@ -208,8 +230,11 @@ int isAsciiDigit(int x) {
  *   Max ops: 16
  *   Rating: 3
  */
+//条件输出
 int conditional(int x, int y, int z) {
-  return 2;
+	int test = !(!x);          //规范化
+	int select = ~test + 1;    //0x0 or 0xFFFFFFFF
+  	return (y & select) | (z & ~select);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -218,8 +243,15 @@ int conditional(int x, int y, int z) {
  *   Max ops: 24
  *   Rating: 3
  */
+//数小于等于
+//思路：同号直接相减看结果，异号则比较符号
 int isLessOrEqual(int x, int y) {
-  return 2;
+	int test = !((y + (~x + 1)) >> 31);  //y-x符号（反）
+	int s1 = !(x >> 31);                 //x符号（反）
+	int s2 = !(y >> 31);                 //y符号（反）
+	int sd = s1 ^ s2;                    //异号时可能存在溢出
+	int sx = sd & s1;                    //异号且x为正
+ 	return (sd & !sx) | (test & !sd);
 }
 //4
 /* 
@@ -230,8 +262,12 @@ int isLessOrEqual(int x, int y) {
  *   Max ops: 12
  *   Rating: 4 
  */
+//实现!操作
+//思路：利用0的相反数特殊性质
+//注意：TMin也有相反数等于本身的性质
 int logicalNeg(int x) {
-  return 2;
+	int neg = ~x + 1;
+  	return ((x | neg) >> 31) + 1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
@@ -245,8 +281,26 @@ int logicalNeg(int x) {
  *  Max ops: 90
  *  Rating: 4
  */
+//补码表示数所需最小位数
 int howManyBits(int x) {
-  return 0;
+	int b_16, b_8, b_4, b_2, b_1, b_0;
+	int result;
+	int sign = x >> 31;
+	x = (x & ~sign) | (~x & sign);  //将负数按位取反，便于寻找最高位，同时避免符号位的1干扰右移过程
+	//逐步缩小检测位数
+	b_16 = (!!(x >> 16)) << 4;  //判断高16位中是否有1
+	x = x >> b_16;              //高16位不为0，将x右移16位再检测
+	b_8 = (!!(x >> 8)) << 3;    //同理，检测高8位（24位）
+	x = x >> b_8;
+	b_4 = (!!(x >> 4)) << 2;    //以下同理
+	x = x >> b_4;
+	b_2 = (!!(x >> 2)) << 1;
+	x = x >> b_2;
+	b_1 = !!(x >> 1);
+	x = x >> b_1;
+	b_0 = x;
+	result = b_16 + b_8 + b_4 + b_2 + b_1 + b_0 + 1;  //非负数添加最高符号位0，负数在计算时取反需添加丢失的符号位1
+  	return result;
 }
 //float
 /* 
@@ -260,8 +314,19 @@ int howManyBits(int x) {
  *   Max ops: 30
  *   Rating: 4
  */
+//单精度浮点数二倍计算
 unsigned floatScale2(unsigned uf) {
-  return 2;
+	int sign = uf & (1 << 31);
+	int exp = (uf >> 23) & 0xFF;
+	int frac = uf & ~(0xff800000);
+	if(exp == 0)    //非规范情况直接左移并保留符号位
+		return (uf << 1) | sign;
+	if(exp == 255)  //指数位全为1时原浮点数为无穷或NaN，直接返回
+		return uf;
+	++exp;
+	if(exp == 255)  //二倍后数溢出，表示为无穷
+		frac = 0;
+	return sign + (exp << 23) + frac;
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
@@ -275,8 +340,24 @@ unsigned floatScale2(unsigned uf) {
  *   Max ops: 30
  *   Rating: 4
  */
+//单精度浮点数转换为整型(int)
 int floatFloat2Int(unsigned uf) {
-  return 2;
+	int sign = uf >> 31;
+	int exp = ((uf >> 23) & 0xFF) - 127;
+	int frac = (uf & ~(0xff800000)) | 0x00800000;
+	if(exp < 0)  //绝对值肯定小于1的数
+		return 0;
+	if(exp > 31) //int溢出及NaN
+		return 0x80000000;
+	if(exp > 23)
+		frac = frac << (exp - 23);
+	else
+		frac = frac >> (23 - exp);
+	if(!((frac >> 31) ^ sign))
+		return frac;
+	if(frac >> 31)
+		return 0x80000000;
+  	return ~frac + 1;
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
@@ -291,6 +372,13 @@ int floatFloat2Int(unsigned uf) {
  *   Max ops: 30 
  *   Rating: 4
  */
+//单精度表示2的幂
 unsigned floatPower2(int x) {
-    return 2;
+	int inf = 0xff << 23;
+	int exp = x + 127;
+	if(exp <= 0)
+		return 0;
+	if(exp >= 255)
+		return inf;
+    return exp << 23;
 }
