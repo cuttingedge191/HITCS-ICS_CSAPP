@@ -5,9 +5,13 @@
 本实验要求在两个有着不同安全漏洞的程序上实现五次攻击，包括以下五个文件：
 
 `ctarget`：一个容易遭受code injection攻击的可执行程序。 
+
 `rtarget`：一个容易遭受return-oriented programming攻击的可执行程序。 
+
 `cookie.txt`：一个8位的十六进制码，用于验证身份的唯一标识符。 
-`farm.c`：目标“gadget farm”的源代码，用于产生return-oriented programming攻击。 
+
+`farm.c`：目标“gadget farm”的源代码，用于产生return-oriented programming攻击。
+
 `hex2raw`：一个生成攻击字符串的工具。
 
 [Writeup（CMU官网实验说明、部分函数C代码等）](http://csapp.cs.cmu.edu/3e/attacklab.pdf)
