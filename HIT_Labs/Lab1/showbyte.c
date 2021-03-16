@@ -32,5 +32,6 @@ int main(int argc, char** argv)
             printf("%.2x\t", buf[i]);
         printf("\n");
     }
+    fclose(fp);
     return 0;
 }
