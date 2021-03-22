@@ -29,10 +29,8 @@ int sra(int x, int k)
     /* Perform shift logically */
     int xsrl = (unsigned) x >> k;
     int sign = x & (1 << (8 * sizeof(int) - 1));
-    int adj = -1 << (8 * sizeof(int) - k);
-    if (sign)
-        xsrl = xsrl | adj;
-    return xsrl;
+    int adj = -1 << (8 * sizeof(int) - k) & (sign >> (8 * sizeof(int) - 1));
+    return xsrl | adj;
 }
 
 /*2.67题：
@@ -73,16 +71,16 @@ int xbyte(packed_t word, int bytenum)
 //2.75题：
 int signed_high_prod(int x, int y)
 {
-    /*返回有符号数相乘结果的高w位，
-    题目描述此函数为要调用的库函数，
-    故此处不具体实现，仅用于避免报错*/
-    return 0xFF;
+    /*返回有符号数相乘结果的高w位，题目描述此函数为要调用的库函数，
+    但并未提供具体实现，此处为使用_int64的自行设计*/
+    long tmp = (long)x * (long)y;
+    return (int)(tmp >> 32);
 }
 
 unsigned unsigned_high_prod(unsigned x, unsigned y)
 {
     int w = (sizeof(int)) << 3;
-    return signed_high_prod(x, y) + (x >> (w - 1)) * y + (y >> (w - 1)) * x;
+    return signed_high_prod((int)x, (int)y) + (x >> (w - 1)) * y + (y >> (w - 1)) * x;
 }
 
 //2.79题：
@@ -124,78 +122,75 @@ float_bits float_half(float_bits f)
     unsigned sign = f & 0x80000000;
     unsigned exp = (f >> 23) & 0xFF;
     unsigned frac = f & 0x7FFFFF;
-    //NaN
-    if (exp == 0xFF && frac != 0)
+    unsigned acc;
+    //NaN or Infinity
+    if (exp == 0xFF)
         return f;
-    //0
-    if (exp == 0 && frac == 0)
-        return 0;
-    //infinity
-    if (exp == 0xFF && frac == 0)
-        return f;
-    //规格->非规格
-    if (exp == 0x01) {
-        --exp;
-        if (frac == 0)
-            frac = 0x40000000;
-        else {
-            frac += 0x800000;
-            frac /= 2;
-        }
+    else if (exp == 0) {
+    	acc = (frac & 0x3) == 3;
+        frac = (frac >> 1) + acc;
     }
-    //非规格->非规格
-    else if (exp == 0)
-        frac = frac >> 1;
-    //规格->规格
-    else if (exp)
+    else {
         --exp;
-    return sign + (exp << 23) + frac;
+        if (exp == 1)
+            frac = 0x400000;
+    }
+	return sign | (exp << 23) | frac;
 }
 
 //测试用主函数
 int main(void)
 {
-    int x, y, result;
+    unsigned x, y, result;
     float f;
+    float* fptr;
+    float_bits res;
+    float_bits* tmp;
     printf("----------Ch2 Homework Test----------\n");
 
     printf("2.59:\n");
-    printf("Input x, y:");
-    scanf("%d %d", &x, &y);
-    result = Q_2_59(x, y);
-    printf("result:%X\n", result);
+    printf("Input x, y:\n");
+    scanf("%u %u", &x, &y);
+    result = Q_2_59((int)x, (int)y);
+    printf("result:%.8X\n", result);
 
     printf("2.63:\n");
-    printf("Input x, k:");
-    scanf("%d %d", &x, &y);
-    result = srl((unsigned)x, y);
-    printf("srl result:%X\n", result);
-    result = sra(x, y);
-    printf("sra result:%X\n", result);
+    printf("Input x, k:\n");
+    scanf("%u %u", &x, &y);
+    result = srl(x, (int)y);
+    printf("srl result:%.8X\n", result);
+    result = sra((int)x, (int)y);
+    printf("sra result:%.8X\n", result);
 
     printf("2.67:\n");
     printf("2.67 b result:%d\n", int_size_is_32_b());
     printf("2.67 c result:%d\n", int_size_is_32_c());
 
     printf("2.71:\n");
-    printf("Input x, bytenum:");
-    scanf("%u %d", &x, &y);
-    result = xbyte((packed_t)x, y);
-    printf("result:%X\n", result);
+    printf("Input x, bytenum:\n");
+    scanf("%u %u", &x, &y);
+    result = xbyte((packed_t)x, (int)y);
+    printf("result:%.8X\n", result);
 
     printf("2.75:\n");
+    printf("Input x, y:\n");
+    scanf("%u %u", &x, &y);
+    result = unsigned_high_prod(x, y);
+    printf("result:%.8X\n", result);
 
     printf("2.79:\n");
-    printf("Input x:");
+    printf("Input x:\n");
     scanf("%d", &x);
-    result = mul3div4(x);
+    result = mul3div4((int)x);
     printf("result:%d\n", result);
 
     printf("2.95:\n");
-    printf("Input f:");
+    printf("Input f:\n");
     scanf("%f", &f);
-    f = float_half((float_bits)f);
-    printf("result:%f", f);
-
+    tmp = (float_bits*)&f;
+    res = float_half(*tmp);
+    fptr = (float*)&res;
+    printf("result:%f, f/2:%f\n", *fptr, f/2);
+    
     return 0;
 }
