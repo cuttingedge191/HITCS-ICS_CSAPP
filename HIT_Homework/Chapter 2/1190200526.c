@@ -72,7 +72,7 @@ int xbyte(packed_t word, int bytenum)
 int signed_high_prod(int x, int y)
 {
     /*返回有符号数相乘结果的高w位，题目描述此函数为要调用的库函数，
-    但并未提供具体实现，此处为使用_int64的自行设计*/
+    但并未提供具体实现，此处为使用long（64位）的自行设计*/
     long tmp = (long)x * (long)y;
     return (int)(tmp >> 32);
 }
@@ -97,13 +97,13 @@ B.(a)101 = 5/7  （b）0110 = 2/5  （c）010011 = 19/63
 */
 
 /*2.87题：
-描述                       Hex        M         E      V               D
--0                        8000    0            -14    -0              -0.0
+描述                       Hex        M         E      V              D
+-0                       8000    0            -14    -0              -0.0
 最小的>2的值               7001    1025/1024    1      1025*2^(-9)     2.001953
-512                       6000    1            9      512             512.0
-最大的非规格化数           03FF    1023/1024    -14    1023*2^(-24)    0.000061   
--inf                      FC00    --           --     -inf            -inf
-十六进制表示为3BB0的数?    3BB0    123/64       -1     123*2^(-7)      0.960938
+512                      6000    1            9      512             512.0
+最大的非规格化数            03FF    1023/1024    -14    1023*2^(-24)    0.000061   
+-inf                     FC00    --           --     -inf            -inf
+十六进制表示为3BB0的数?     3BB0    123/64       -1     123*2^(-7)      0.960938
 */
 
 /*2.91题：
@@ -127,7 +127,7 @@ float_bits float_half(float_bits f)
     if (exp == 0xFF)
         return f;
     else if (exp == 0) {
-    	acc = (frac & 0x3) == 3;
+        acc = (frac & 0x3) == 3;
         frac = (frac >> 1) + acc;
     }
     else {
@@ -135,7 +135,7 @@ float_bits float_half(float_bits f)
         if (exp == 1)
             frac = 0x400000;
     }
-	return sign | (exp << 23) | frac;
+    return sign | (exp << 23) | frac;
 }
 
 //测试用主函数
