@@ -87,7 +87,9 @@ unsigned unsigned_high_prod(unsigned x, unsigned y)
 int mul3div4(int x)
 {
     int mul3 = (x << 1) + x;
-    int div4 = (mul3 + 3) >> 2;
+    int sign = (x & (int)0x80000000) >> 31;
+    int bias = 0x3 & sign;
+    int div4 = (mul3 + bias) >> 2;
     return div4;
 }
 
