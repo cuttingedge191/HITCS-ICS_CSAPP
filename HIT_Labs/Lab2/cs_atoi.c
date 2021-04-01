@@ -6,10 +6,11 @@ int cs_atoi(char* str)
 {
     int res = 0;
     int isPos = (str[0] != '-');
-    int i = 1;
+    int i = !isPos;
     while (str[i] >= '0' && str[i] <= '9')
     {
         res = res * 10 + (str[i] - '0');
+        ++i;
     }
     return isPos ? res : -res;
 }
@@ -27,7 +28,7 @@ int main(void)
         printf("读取字符串错误！\n");
         exit(0);
     }
-    while (*str == ' ')
+    while (*(str + bias) == ' ') 
         ++bias;  //去除前导空格
     res = cs_atoi(str + bias);
     printf("转换后的整数为：%d\n", res);
