@@ -10,6 +10,7 @@ char* cs_ftoa(float x)
     int count = 0;
     int tmp;
     int ptr = 0;
+    int keep = 0;
     __int128_t z;
     double f;
     if (x < 0)
@@ -54,6 +55,9 @@ char* cs_ftoa(float x)
         f -= (double)tmp;
         *(res + ptr) = '0' + tmp;
         ++ptr;
+        ++keep;
+        if (keep == 6)
+        	break;
     }
     *(res + ptr) = '\0';
     return res;
