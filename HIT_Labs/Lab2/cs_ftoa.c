@@ -10,7 +10,7 @@ char* cs_ftoa(float x)
     int count = 0;
     int tmp;
     int ptr = 0;
-    long long z;
+    __int128_t z;
     double f;
     if (x < 0)
     {
@@ -18,8 +18,8 @@ char* cs_ftoa(float x)
         *res = '-';
         ++ptr;
     }
-    z = (long long)x;
-    f = x - (double)z;
+    z = (__int128_t)x;
+    f = (double)x - (double)z;
     if (x = 0)
     {
         *res = '0';
@@ -67,10 +67,15 @@ int main(void)
     test = (int*)&input;
     printf("输入一个浮点数:\n");
     scanf(" %f", &input);
-    if ((*test ^ 0x7f80000) & 0x7f80000 == 0)
+    if (((*test) & 0x7f800000) == 0x7f800000)
     {
+        if ((*test) & 0x7fffff)
+        {
+            printf("转换后的字符串为：NaN\n");
+            return 0;
+        }
         printf("转换后的字符串为：");
-        if (*test & 0x80000000)
+        if ((*test) & 0x80000000)
             printf("NEG_");
         else
             printf("POS_");
