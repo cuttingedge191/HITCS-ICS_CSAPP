@@ -48,7 +48,7 @@ char* cs_ftoa(float x)
             ++ptr;
         }
     }
-    while (f && ptr < MAX - 1)
+    while (ptr < MAX - 1)
     {
         f *= 10;
         tmp = (int)f;
