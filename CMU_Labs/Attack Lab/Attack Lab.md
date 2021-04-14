@@ -22,37 +22,36 @@
 
   要求输入是一个十六进制格式的字符串，用两个十六进制数字表示一个字节值，字节值之间以空白符（空格或新行）分隔，注意使用小端法字节序。
 
-  将攻击字符串存入文件中，如`attack.txt`，然后用下述方法调用：
-  1.`cat attack.txt | ./hex2raw | ./ctarget`
-  2.`./hex2raw <attack.txt> attackraw.txt`
-  `./ctarget < attackraw.txt` 或 `./ctarget -i attackraw.txt`
-  3.结合gdb使用
-  `./hex2raw <attack.txt> attackraw.txt`
-  `gdb ctarget`
+  将攻击字符串存入文件中，如`attack.txt`，然后用下述方法调用：  
+  1.`cat attack.txt | ./hex2raw | ./ctarget`  
+  2.`./hex2raw <attack.txt> attackraw.txt`  
+  `./ctarget < attackraw.txt` 或 `./ctarget -i attackraw.txt`  
+  3.结合gdb使用  
+  `./hex2raw <attack.txt> attackraw.txt`  
+  `gdb ctarget`  
   `(gdb) run < attackraw.txt` 或 `(gdb) run -i attackraw.txt`
 
 - **生成字节代码操作**
 
   编写一个汇编文件：
-  vim attack.s
+  `vim attack.s`  
   汇编和反汇编此文件：
-  gcc -c attack.s
-  objdump -d attack.o > attack.d
+  `gcc -c attack.s`
+  `objdump -d attack.o > attack.d`  
   由此推出这段代码的字节序列。
 
 - **涉及的gdb命令**
 
-  `(gdb) r` run的简写，运行被调试的程序。若有断点，则程序暂停在第一个可用断点处。
-  `(gdb) c` continue的简写，继续执行被调试程序，直至下一个断点或程序结束。
-  `(gdb) print <指定变量>` 显示指定变量的值。
-  `(gdb) break *<代码地址>` 设置断点。
+  `(gdb) r` run的简写，运行被调试的程序。若有断点，则程序暂停在第一个可用断点处。  
+  `(gdb) c` continue的简写，继续执行被调试程序，直至下一个断点或程序结束。    
+  `(gdb) print <指定变量>` 显示指定变量的值。  
+  `(gdb) break *<代码地址>` 设置断点。  
   `(gdb) x/<n/f/u> <addr>` examine的简写，查看内存地址中的值。
   
 - **两个目标文件运行时的参数**
 
-  `-q` 不发送成绩
-  `-i` 从文件中输入
-  
+  `-q` 不发送成绩  
+  `-i` 从文件中输入  
   自学者需使用`-q`参数避免报错。
 
 ## Part 1
