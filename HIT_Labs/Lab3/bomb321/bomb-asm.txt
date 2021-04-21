@@ -354,33 +354,33 @@ Disassembly of section .text:
   401474:	48 83 ec 10          	sub    $0x10,%rsp
   401478:	48 8d 4d f8          	lea    -0x8(%rbp),%rcx
   40147c:	48 8d 55 fc          	lea    -0x4(%rbp),%rdx
-  401480:	be 1f 33 40 00       	mov    $0x40331f,%esi
-  401485:	b8 00 00 00 00       	mov    $0x0,%eax
+  401480:	be 1f 33 40 00       	mov    $0x40331f,%esi                #格式字符串"%d %d"，说明应该输入两个数
+  401485:	b8 00 00 00 00       	mov    $0x0,%eax                     #设第一个数为input1，第二个数为input2
   40148a:	e8 81 fc ff ff       	callq  401110 <__isoc99_sscanf@plt>
   40148f:	83 f8 01             	cmp    $0x1,%eax
-  401492:	7e 11                	jle    4014a5 <phase_3+0x35>
-  401494:	8b 45 fc             	mov    -0x4(%rbp),%eax
+  401492:	7e 11                	jle    4014a5 <phase_3+0x35>         #输入少于2个爆炸
+  401494:	8b 45 fc             	mov    -0x4(%rbp),%eax               #取input1至%eax
   401497:	83 f8 07             	cmp    $0x7,%eax
-  40149a:	77 7b                	ja     401517 <phase_3+0xa7>
+  40149a:	77 7b                	ja     401517 <phase_3+0xa7>         #input1大于7则爆炸
   40149c:	89 c0                	mov    %eax,%eax
-  40149e:	ff 24 c5 c0 31 40 00 	jmpq   *0x4031c0(,%rax,8)
+  40149e:	ff 24 c5 c0 31 40 00 	jmpq   *0x4031c0(,%rax,8)            #基址-变址法寻址，0x4031c0应该是一个跳转表的起始位置
   4014a5:	e8 87 04 00 00       	callq  401931 <explode_bomb>
   4014aa:	eb e8                	jmp    401494 <phase_3+0x24>
-  4014ac:	b8 00 00 00 00       	mov    $0x0,%eax
-  4014b1:	2d d7 01 00 00       	sub    $0x1d7,%eax
-  4014b6:	05 2e 02 00 00       	add    $0x22e,%eax
-  4014bb:	2d 56 02 00 00       	sub    $0x256,%eax
-  4014c0:	05 56 02 00 00       	add    $0x256,%eax
-  4014c5:	2d 56 02 00 00       	sub    $0x256,%eax
-  4014ca:	05 56 02 00 00       	add    $0x256,%eax
-  4014cf:	2d 56 02 00 00       	sub    $0x256,%eax
-  4014d4:	83 7d fc 05          	cmpl   $0x5,-0x4(%rbp)
+  4014ac:	b8 00 00 00 00       	mov    $0x0,%eax                     #input1 = 1, %eax = 0 - 0x1d7 + 0x22e - 0x256
+  4014b1:	2d d7 01 00 00       	sub    $0x1d7,%eax                   #input1 = 0, %eax = 0x127 - 0x1d7 + 0x22e - 0x256
+  4014b6:	05 2e 02 00 00       	add    $0x22e,%eax                   #input1 = 2, %eax = 0 + 0x22e - 0x256
+  4014bb:	2d 56 02 00 00       	sub    $0x256,%eax                   #input1 = 3, %eax = 0 - 0x256
+  4014c0:	05 56 02 00 00       	add    $0x256,%eax                   #input1 = 4, %eax = 0
+  4014c5:	2d 56 02 00 00       	sub    $0x256,%eax                   #input1 = 5, %eax = 0 - 0x256
+  4014ca:	05 56 02 00 00       	add    $0x256,%eax                   #input1 = 6, %eax = 0
+  4014cf:	2d 56 02 00 00       	sub    $0x256,%eax                   #input1 = 7, %eax = 0 - 0x256
+  4014d4:	83 7d fc 05          	cmpl   $0x5,-0x4(%rbp)               #要求input1 <= 5
   4014d8:	7f 05                	jg     4014df <phase_3+0x6f>
-  4014da:	39 45 f8             	cmp    %eax,-0x8(%rbp)
+  4014da:	39 45 f8             	cmp    %eax,-0x8(%rbp)               #要求input2 = %eax
   4014dd:	74 05                	je     4014e4 <phase_3+0x74>
   4014df:	e8 4d 04 00 00       	callq  401931 <explode_bomb>
   4014e4:	c9                   	leaveq 
-  4014e5:	c3                   	retq   
+  4014e5:	c3                   	retq                                 #以下是跳转表跳转到的一些目标位置，均为对%eax赋值再跳至上方，此处略
   4014e6:	b8 27 01 00 00       	mov    $0x127,%eax
   4014eb:	eb c4                	jmp    4014b1 <phase_3+0x41>
   4014ed:	b8 00 00 00 00       	mov    $0x0,%eax
@@ -399,34 +399,34 @@ Disassembly of section .text:
   40151c:	b8 00 00 00 00       	mov    $0x0,%eax
   401521:	eb b1                	jmp    4014d4 <phase_3+0x64>
 
-0000000000401523 <func4>:
+0000000000401523 <func4>:                                           #由phase_4函数调用
   401523:	55                   	push   %rbp
   401524:	48 89 e5             	mov    %rsp,%rbp
   401527:	53                   	push   %rbx
   401528:	48 83 ec 08          	sub    $0x8,%rsp
-  40152c:	89 d0                	mov    %edx,%eax
-  40152e:	29 f0                	sub    %esi,%eax
-  401530:	89 c3                	mov    %eax,%ebx
-  401532:	c1 eb 1f             	shr    $0x1f,%ebx
-  401535:	01 c3                	add    %eax,%ebx
-  401537:	d1 fb                	sar    %ebx
-  401539:	01 f3                	add    %esi,%ebx
-  40153b:	39 fb                	cmp    %edi,%ebx
-  40153d:	7f 0b                	jg     40154a <func4+0x27>
-  40153f:	7c 15                	jl     401556 <func4+0x33>
-  401541:	89 d8                	mov    %ebx,%eax
+  40152c:	89 d0                	mov    %edx,%eax             #%eax = %edx
+  40152e:	29 f0                	sub    %esi,%eax             #%eax -= %esi
+  401530:	89 c3                	mov    %eax,%ebx             #%ebx = %eax
+  401532:	c1 eb 1f             	shr    $0x1f,%ebx            #%ebx >>= 31（逻辑右移，相当于取符号位）
+  401535:	01 c3                	add    %eax,%ebx             #%ebx += %eax
+  401537:	d1 fb                	sar    %ebx                  #%ebx >>= 1（算术右移）
+  401539:	01 f3                	add    %esi,%ebx             #%ebx += %esi
+  40153b:	39 fb                	cmp    %edi,%ebx             #比较%ebx与%edi
+  40153d:	7f 0b                	jg     40154a <func4+0x27>   #%ebx > %edi跳转
+  40153f:	7c 15                	jl     401556 <func4+0x33>   #%ebx < %edi跳转
+  401541:	89 d8                	mov    %ebx,%eax             #%eax = %ebx
   401543:	48 83 c4 08          	add    $0x8,%rsp
   401547:	5b                   	pop    %rbx
   401548:	5d                   	pop    %rbp
   401549:	c3                   	retq   
-  40154a:	8d 53 ff             	lea    -0x1(%rbx),%edx
-  40154d:	e8 d1 ff ff ff       	callq  401523 <func4>
-  401552:	01 c3                	add    %eax,%ebx
-  401554:	eb eb                	jmp    401541 <func4+0x1e>
-  401556:	8d 73 01             	lea    0x1(%rbx),%esi
-  401559:	e8 c5 ff ff ff       	callq  401523 <func4>
-  40155e:	01 c3                	add    %eax,%ebx
-  401560:	eb df                	jmp    401541 <func4+0x1e>
+  40154a:	8d 53 ff             	lea    -0x1(%rbx),%edx       #%edx = %ebx - 1
+  40154d:	e8 d1 ff ff ff       	callq  401523 <func4>        #递归调用自身
+  401552:	01 c3                	add    %eax,%ebx             #%ebx += %eax
+  401554:	eb eb                	jmp    401541 <func4+0x1e>   #跳转
+  401556:	8d 73 01             	lea    0x1(%rbx),%esi        #%esi = %ebx + 1
+  401559:	e8 c5 ff ff ff       	callq  401523 <func4>        #递归调用自身
+  40155e:	01 c3                	add    %eax,%ebx             #%ebx += %eax
+  401560:	eb df                	jmp    401541 <func4+0x1e>   #跳转
 
 0000000000401562 <phase_4>:
   401562:	55                   	push   %rbp
@@ -434,24 +434,24 @@ Disassembly of section .text:
   401566:	48 83 ec 10          	sub    $0x10,%rsp
   40156a:	48 8d 4d f8          	lea    -0x8(%rbp),%rcx
   40156e:	48 8d 55 fc          	lea    -0x4(%rbp),%rdx
-  401572:	be 1f 33 40 00       	mov    $0x40331f,%esi
-  401577:	b8 00 00 00 00       	mov    $0x0,%eax
+  401572:	be 1f 33 40 00       	mov    $0x40331f,%esi               #省略部分为与phase_3同理的数据读入
+  401577:	b8 00 00 00 00       	mov    $0x0,%eax                    #设第一个数为input1，第二个数为input2
   40157c:	e8 8f fb ff ff       	callq  401110 <__isoc99_sscanf@plt>
   401581:	83 f8 02             	cmp    $0x2,%eax
-  401584:	75 0c                	jne    401592 <phase_4+0x30>
+  401584:	75 0c                	jne    401592 <phase_4+0x30>        #依然是要求输入两个数
   401586:	8b 45 fc             	mov    -0x4(%rbp),%eax
   401589:	85 c0                	test   %eax,%eax
-  40158b:	78 05                	js     401592 <phase_4+0x30>
-  40158d:	83 f8 0e             	cmp    $0xe,%eax
+  40158b:	78 05                	js     401592 <phase_4+0x30>        #input1如果是负数则引爆
+  40158d:	83 f8 0e             	cmp    $0xe,%eax                    #input1 <= 14
   401590:	7e 05                	jle    401597 <phase_4+0x35>
   401592:	e8 9a 03 00 00       	callq  401931 <explode_bomb>
-  401597:	ba 0e 00 00 00       	mov    $0xe,%edx
-  40159c:	be 00 00 00 00       	mov    $0x0,%esi
-  4015a1:	8b 7d fc             	mov    -0x4(%rbp),%edi
-  4015a4:	e8 7a ff ff ff       	callq  401523 <func4>
-  4015a9:	83 f8 23             	cmp    $0x23,%eax
+  401597:	ba 0e 00 00 00       	mov    $0xe,%edx                    #%edx = 14
+  40159c:	be 00 00 00 00       	mov    $0x0,%esi                    #%esi = 0
+  4015a1:	8b 7d fc             	mov    -0x4(%rbp),%edi              #%edi = input1
+  4015a4:	e8 7a ff ff ff       	callq  401523 <func4>               #调用func4函数，以上几个寄存器可视为传递参数
+  4015a9:	83 f8 23             	cmp    $0x23,%eax                   #func4函数返回值应为35
   4015ac:	75 06                	jne    4015b4 <phase_4+0x52>
-  4015ae:	83 7d f8 23          	cmpl   $0x23,-0x8(%rbp)
+  4015ae:	83 7d f8 23          	cmpl   $0x23,-0x8(%rbp)             #input2 = 35
   4015b2:	74 05                	je     4015b9 <phase_4+0x57>
   4015b4:	e8 78 03 00 00       	callq  401931 <explode_bomb>
   4015b9:	c9                   	leaveq 
