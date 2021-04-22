@@ -462,26 +462,26 @@ Disassembly of section .text:
   4015bc:	48 89 e5             	mov    %rsp,%rbp
   4015bf:	53                   	push   %rbx
   4015c0:	48 83 ec 18          	sub    $0x18,%rsp
-  4015c4:	48 89 fb             	mov    %rdi,%rbx
+  4015c4:	48 89 fb             	mov    %rdi,%rbx                  #将输入字符串的地址传给string_length函数
   4015c7:	e8 55 02 00 00       	callq  401821 <string_length>
-  4015cc:	83 f8 06             	cmp    $0x6,%eax
+  4015cc:	83 f8 06             	cmp    $0x6,%eax                  #输入字符串的长度要求为6
   4015cf:	75 24                	jne    4015f5 <phase_5+0x3a>
-  4015d1:	b8 00 00 00 00       	mov    $0x0,%eax
-  4015d6:	83 f8 05             	cmp    $0x5,%eax
+  4015d1:	b8 00 00 00 00       	mov    $0x0,%eax                  #循环变量初始化
+  4015d6:	83 f8 05             	cmp    $0x5,%eax                  #循环终止条件（遍历完整个字符串）
   4015d9:	7f 21                	jg     4015fc <phase_5+0x41>
   4015db:	48 63 c8             	movslq %eax,%rcx
-  4015de:	0f b6 14 0b          	movzbl (%rbx,%rcx,1),%edx
-  4015e2:	83 e2 0f             	and    $0xf,%edx
-  4015e5:	0f b6 92 00 32 40 00 	movzbl 0x403200(%rdx),%edx
-  4015ec:	88 54 0d e9          	mov    %dl,-0x17(%rbp,%rcx,1)
-  4015f0:	83 c0 01             	add    $0x1,%eax
-  4015f3:	eb e1                	jmp    4015d6 <phase_5+0x1b>
+  4015de:	0f b6 14 0b          	movzbl (%rbx,%rcx,1),%edx         #依次取字符串中每个字符，以ascii数值保存于%edx
+  4015e2:	83 e2 0f             	and    $0xf,%edx                  #%edx = %edx & 0xf（低四位）
+  4015e5:	0f b6 92 00 32 40 00 	movzbl 0x403200(%rdx),%edx        #将处理后的值作为偏移量，访问一个字符数组
+  4015ec:	88 54 0d e9          	mov    %dl,-0x17(%rbp,%rcx,1)     #将取出的字符逐个放置
+  4015f0:	83 c0 01             	add    $0x1,%eax                  #循环变量增一
+  4015f3:	eb e1                	jmp    4015d6 <phase_5+0x1b>      #检查循环条件
   4015f5:	e8 37 03 00 00       	callq  401931 <explode_bomb>
   4015fa:	eb d5                	jmp    4015d1 <phase_5+0x16>
-  4015fc:	c6 45 ef 00          	movb   $0x0,-0x11(%rbp)
-  401600:	be ae 31 40 00       	mov    $0x4031ae,%esi
+  4015fc:	c6 45 ef 00          	movb   $0x0,-0x11(%rbp)           #向末尾放置一个'\0'
+  401600:	be ae 31 40 00       	mov    $0x4031ae,%esi             #指向一个字符串："devils"
   401605:	48 8d 7d e9          	lea    -0x17(%rbp),%rdi
-  401609:	e8 27 02 00 00       	callq  401835 <strings_not_equal>
+  401609:	e8 27 02 00 00       	callq  401835 <strings_not_equal> #检查新组合成的字符串与要求的是否相同
   40160e:	85 c0                	test   %eax,%eax
   401610:	75 07                	jne    401619 <phase_5+0x5e>
   401612:	48 83 c4 18          	add    $0x18,%rsp
@@ -499,71 +499,79 @@ Disassembly of section .text:
   401628:	53                   	push   %rbx
   401629:	48 83 ec 58          	sub    $0x58,%rsp
   40162d:	48 8d 75 c0          	lea    -0x40(%rbp),%rsi
-  401631:	e8 1d 03 00 00       	callq  401953 <read_six_numbers>
-  401636:	41 bc 00 00 00 00    	mov    $0x0,%r12d
-  40163c:	eb 29                	jmp    401667 <phase_6+0x47>
+  401631:	e8 1d 03 00 00       	callq  401953 <read_six_numbers> #与阶段二同理，还是要求六个数字
+                                       #循环体1开始
+  401636:	41 bc 00 00 00 00    	mov    $0x0,%r12d                #外层循环变量初始化
+  40163c:	eb 29                	jmp    401667 <phase_6+0x47>     #跳转到外层循环条件检测
   40163e:	e8 ee 02 00 00       	callq  401931 <explode_bomb>
   401643:	eb 37                	jmp    40167c <phase_6+0x5c>
-  401645:	83 c3 01             	add    $0x1,%ebx
-  401648:	83 fb 05             	cmp    $0x5,%ebx
+  401645:	83 c3 01             	add    $0x1,%ebx                 #内层循环变量更新
+  401648:	83 fb 05             	cmp    $0x5,%ebx                 #内层循环终止条件
   40164b:	7f 17                	jg     401664 <phase_6+0x44>
   40164d:	49 63 c4             	movslq %r12d,%rax
   401650:	48 63 d3             	movslq %ebx,%rdx
-  401653:	8b 7c 95 c0          	mov    -0x40(%rbp,%rdx,4),%edi
-  401657:	39 7c 85 c0          	cmp    %edi,-0x40(%rbp,%rax,4)
+  401653:	8b 7c 95 c0          	mov    -0x40(%rbp,%rdx,4),%edi   #内层循环逐个取数
+  401657:	39 7c 85 c0          	cmp    %edi,-0x40(%rbp,%rax,4)   #要求任两个数字不相等
   40165b:	75 e8                	jne    401645 <phase_6+0x25>
   40165d:	e8 cf 02 00 00       	callq  401931 <explode_bomb>
   401662:	eb e1                	jmp    401645 <phase_6+0x25>
-  401664:	45 89 ec             	mov    %r13d,%r12d
-  401667:	41 83 fc 05          	cmp    $0x5,%r12d
+  401664:	45 89 ec             	mov    %r13d,%r12d               #外层循环变量更新
+  401667:	41 83 fc 05          	cmp    $0x5,%r12d                #外层循环终止条件（遍历完6个数字）
   40166b:	7f 19                	jg     401686 <phase_6+0x66>
-  40166d:	49 63 c4             	movslq %r12d,%rax
-  401670:	8b 44 85 c0          	mov    -0x40(%rbp,%rax,4),%eax
+  40166d:	49 63 c4             	movslq %r12d,%rax                
+  401670:	8b 44 85 c0          	mov    -0x40(%rbp,%rax,4),%eax   #外层循环逐个取数
   401674:	83 e8 01             	sub    $0x1,%eax
-  401677:	83 f8 05             	cmp    $0x5,%eax
-  40167a:	77 c2                	ja     40163e <phase_6+0x1e>
+  401677:	83 f8 05             	cmp    $0x5,%eax                 #取的数减一与5比较
+  40167a:	77 c2                	ja     40163e <phase_6+0x1e>     #说明数字大于6或小于1会爆炸（ja无符号比较）
   40167c:	45 8d 6c 24 01       	lea    0x1(%r12),%r13d
-  401681:	44 89 eb             	mov    %r13d,%ebx
+  401681:	44 89 eb             	mov    %r13d,%ebx                #%ebx = 外层循环变量 + 1（内层循环变量初始化）
   401684:	eb c2                	jmp    401648 <phase_6+0x28>
-  401686:	be 00 00 00 00       	mov    $0x0,%esi
-  40168b:	eb 08                	jmp    401695 <phase_6+0x75>
-  40168d:	48 89 54 cd 90       	mov    %rdx,-0x70(%rbp,%rcx,8)
-  401692:	83 c6 01             	add    $0x1,%esi
-  401695:	83 fe 05             	cmp    $0x5,%esi
-  401698:	7f 1c                	jg     4016b6 <phase_6+0x96>
-  40169a:	b8 01 00 00 00       	mov    $0x1,%eax
-  40169f:	ba d0 52 40 00       	mov    $0x4052d0,%edx
+                                       #循环体1结束
+                                       #循环体2开始
+  401686:	be 00 00 00 00       	mov    $0x0,%esi                 #循环变量初始化
+  40168b:	eb 08                	jmp    401695 <phase_6+0x75>     #跳至循环条件检测
+  40168d:	48 89 54 cd 90       	mov    %rdx,-0x70(%rbp,%rcx,8)   #将地址放在对应数字序号位置
+  401692:	83 c6 01             	add    $0x1,%esi                 #循环变量更新
+  401695:	83 fe 05             	cmp    $0x5,%esi                 #说明此循环体依然是遍历6个数字
+  401698:	7f 1c                	jg     4016b6 <phase_6+0x96>     #跳出循环
+  40169a:	b8 01 00 00 00       	mov    $0x1,%eax                 #%eax = 1
+  40169f:	ba d0 52 40 00       	mov    $0x4052d0,%edx            #一个地址，保存了一些有规律的数据（链表结构）
   4016a4:	48 63 ce             	movslq %esi,%rcx
-  4016a7:	39 44 8d c0          	cmp    %eax,-0x40(%rbp,%rcx,4)
-  4016ab:	7e e0                	jle    40168d <phase_6+0x6d>
-  4016ad:	48 8b 52 08          	mov    0x8(%rdx),%rdx
-  4016b1:	83 c0 01             	add    $0x1,%eax
+  4016a7:	39 44 8d c0          	cmp    %eax,-0x40(%rbp,%rcx,4)   #逐个取数，与%eax比较
+  4016ab:	7e e0                	jle    40168d <phase_6+0x6d>     #<=eax跳转
+  4016ad:	48 8b 52 08          	mov    0x8(%rdx),%rdx            #未跳转则取当前结点next指向结点的地址
+  4016b1:	83 c0 01             	add    $0x1,%eax                 #%eax += 1
   4016b4:	eb ee                	jmp    4016a4 <phase_6+0x84>
-  4016b6:	48 8b 5d 90          	mov    -0x70(%rbp),%rbx
+                                       #循环体2结束
+                                       #循环体3开始
+  4016b6:	48 8b 5d 90          	mov    -0x70(%rbp),%rbx          #取放置的第一个结点地址
   4016ba:	48 89 d9             	mov    %rbx,%rcx
-  4016bd:	b8 01 00 00 00       	mov    $0x1,%eax
+  4016bd:	b8 01 00 00 00       	mov    $0x1,%eax                 #循环变量初始化
   4016c2:	eb 12                	jmp    4016d6 <phase_6+0xb6>
   4016c4:	48 63 d0             	movslq %eax,%rdx
-  4016c7:	48 8b 54 d5 90       	mov    -0x70(%rbp,%rdx,8),%rdx
-  4016cc:	48 89 51 08          	mov    %rdx,0x8(%rcx)
+  4016c7:	48 8b 54 d5 90       	mov    -0x70(%rbp,%rdx,8),%rdx   #链表访问next域指向的结点
+  4016cc:	48 89 51 08          	mov    %rdx,0x8(%rcx)            #更新next域（重新连接链表）
   4016d0:	83 c0 01             	add    $0x1,%eax
   4016d3:	48 89 d1             	mov    %rdx,%rcx
-  4016d6:	83 f8 05             	cmp    $0x5,%eax
+  4016d6:	83 f8 05             	cmp    $0x5,%eax                 #循环终止条件检测
   4016d9:	7e e9                	jle    4016c4 <phase_6+0xa4>
-  4016db:	48 c7 41 08 00 00 00 	movq   $0x0,0x8(%rcx)
+                                       #循环体3结束
+  4016db:	48 c7 41 08 00 00 00 	movq   $0x0,0x8(%rcx)            #设置新的链表尾部NULL
   4016e2:	00 
-  4016e3:	41 bc 00 00 00 00    	mov    $0x0,%r12d
+                                       #循环体4开始
+  4016e3:	41 bc 00 00 00 00    	mov    $0x0,%r12d                #循环变量初始化
   4016e9:	eb 08                	jmp    4016f3 <phase_6+0xd3>
   4016eb:	48 8b 5b 08          	mov    0x8(%rbx),%rbx
   4016ef:	41 83 c4 01          	add    $0x1,%r12d
-  4016f3:	41 83 fc 04          	cmp    $0x4,%r12d
+  4016f3:	41 83 fc 04          	cmp    $0x4,%r12d                #循环终止条件检测
   4016f7:	7f 11                	jg     40170a <phase_6+0xea>
-  4016f9:	48 8b 43 08          	mov    0x8(%rbx),%rax
-  4016fd:	8b 00                	mov    (%rax),%eax
-  4016ff:	39 03                	cmp    %eax,(%rbx)
-  401701:	7e e8                	jle    4016eb <phase_6+0xcb>
+  4016f9:	48 8b 43 08          	mov    0x8(%rbx),%rax            #取结点next域指向的结点地址
+  4016fd:	8b 00                	mov    (%rax),%eax               #取结点中保存的数
+  4016ff:	39 03                	cmp    %eax,(%rbx)               #与前一结点中数比较
+  401701:	7e e8                	jle    4016eb <phase_6+0xcb>     #要求新的链表数值递增
   401703:	e8 29 02 00 00       	callq  401931 <explode_bomb>
   401708:	eb e1                	jmp    4016eb <phase_6+0xcb>
+                                       #循环体4结束
   40170a:	48 83 c4 58          	add    $0x58,%rsp
   40170e:	5b                   	pop    %rbx
   40170f:	41 5c                	pop    %r12
@@ -779,9 +787,9 @@ Disassembly of section .text:
   401967:	50                   	push   %rax
   401968:	4c 8d 4e 0c          	lea    0xc(%rsi),%r9                  #+12
   40196c:	4c 8d 46 08          	lea    0x8(%rsi),%r8                  #+8
-  401970:	be 13 33 40 00       	mov    $0x403313,%esi                 #格式字符串
+  401970:	be 13 33 40 00       	mov    $0x403313,%esi                 #格式字符串："%d %d %d %d %d %d"
   401975:	b8 00 00 00 00       	mov    $0x0,%eax
-  40197a:	e8 91 f7 ff ff       	callq  401110 <__isoc99_sscanf@plt>   #读入
+  40197a:	e8 91 f7 ff ff       	callq  401110 <__isoc99_sscanf@plt>   #格式读入
   40197f:	48 83 c4 10          	add    $0x10,%rsp
   401983:	83 f8 05             	cmp    $0x5,%eax
   401986:	7e 02                	jle    40198a <read_six_numbers+0x37> #个数小于等于5，引爆
