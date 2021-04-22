@@ -254,7 +254,7 @@ $7 = 0x400fa6
   401029:	83 f8 02             	cmp    $0x2,%eax
   40102c:	75 07                	jne    401035 <phase_4+0x29> #说明输入两个数
   40102e:	83 7c 24 08 0e       	cmpl   $0xe,0x8(%rsp)
-  401033:	76 05                	jbe    40103a <phase_4+0x2e> #input1 <= 15
+  401033:	76 05                	jbe    40103a <phase_4+0x2e> #input1 <= 14
   401035:	e8 00 04 00 00       	callq  40143a <explode_bomb> #否则引爆
   40103a:	ba 0e 00 00 00       	mov    $0xe,%edx #14
   40103f:	be 00 00 00 00       	mov    $0x0,%esi #0
