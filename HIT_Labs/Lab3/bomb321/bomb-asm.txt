@@ -580,25 +580,25 @@ Disassembly of section .text:
   401714:	c3                   	retq   
 
 0000000000401715 <fun7>:
-  401715:	48 85 ff             	test   %rdi,%rdi
+  401715:	48 85 ff             	test   %rdi,%rdi             #判断输入地址是否为NULL
   401718:	74 2f                	je     401749 <fun7+0x34>
   40171a:	55                   	push   %rbp
   40171b:	48 89 e5             	mov    %rsp,%rbp
-  40171e:	8b 07                	mov    (%rdi),%eax
-  401720:	39 f0                	cmp    %esi,%eax
-  401722:	7f 09                	jg     40172d <fun7+0x18>
-  401724:	75 14                	jne    40173a <fun7+0x25>
-  401726:	b8 00 00 00 00       	mov    $0x0,%eax
+  40171e:	8b 07                	mov    (%rdi),%eax           #访问地址处内容（整数）
+  401720:	39 f0                	cmp    %esi,%eax             #与输入的整数比较
+  401722:	7f 09                	jg     40172d <fun7+0x18>    #地址处数 > 输入整数
+  401724:	75 14                	jne    40173a <fun7+0x25>    #地址处数 < 输入整数
+  401726:	b8 00 00 00 00       	mov    $0x0,%eax             #两数相等则函数返回0退出
   40172b:	5d                   	pop    %rbp
   40172c:	c3                   	retq   
-  40172d:	48 8b 7f 08          	mov    0x8(%rdi),%rdi
-  401731:	e8 df ff ff ff       	callq  401715 <fun7>
-  401736:	01 c0                	add    %eax,%eax
-  401738:	eb f1                	jmp    40172b <fun7+0x16>
-  40173a:	48 8b 7f 10          	mov    0x10(%rdi),%rdi
-  40173e:	e8 d2 ff ff ff       	callq  401715 <fun7>
-  401743:	8d 44 00 01          	lea    0x1(%rax,%rax,1),%eax
-  401747:	eb e2                	jmp    40172b <fun7+0x16>
+  40172d:	48 8b 7f 08          	mov    0x8(%rdi),%rdi        #访问左孩子结点
+  401731:	e8 df ff ff ff       	callq  401715 <fun7>         #递归调用本身
+  401736:	01 c0                	add    %eax,%eax             #%eax += %eax
+  401738:	eb f1                	jmp    40172b <fun7+0x16>    #函数退出
+  40173a:	48 8b 7f 10          	mov    0x10(%rdi),%rdi       #访问右孩子结点
+  40173e:	e8 d2 ff ff ff       	callq  401715 <fun7>         #递归调用本身
+  401743:	8d 44 00 01          	lea    0x1(%rax,%rax,1),%eax #%eax = 2*%eax + 1
+  401747:	eb e2                	jmp    40172b <fun7+0x16>    #函数退出
   401749:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
   40174e:	c3                   	retq   
 
@@ -607,19 +607,19 @@ Disassembly of section .text:
   401750:	48 89 e5             	mov    %rsp,%rbp
   401753:	53                   	push   %rbx
   401754:	48 83 ec 08          	sub    $0x8,%rsp
-  401758:	e8 32 02 00 00       	callq  40198f <read_line>
+  401758:	e8 32 02 00 00       	callq  40198f <read_line>         #读取一行
   40175d:	48 89 c7             	mov    %rax,%rdi
-  401760:	e8 db f9 ff ff       	callq  401140 <atoi@plt>
-  401765:	89 c3                	mov    %eax,%ebx
-  401767:	8d 40 ff             	lea    -0x1(%rax),%eax
+  401760:	e8 db f9 ff ff       	callq  401140 <atoi@plt>          #转换为整数
+  401765:	89 c3                	mov    %eax,%ebx                  #%ebx为转换后的整数
+  401767:	8d 40 ff             	lea    -0x1(%rax),%eax            #%eax为整数减一
   40176a:	3d e8 03 00 00       	cmp    $0x3e8,%eax
-  40176f:	77 27                	ja     401798 <secret_phase+0x49>
-  401771:	89 de                	mov    %ebx,%esi
-  401773:	bf f0 50 40 00       	mov    $0x4050f0,%edi
-  401778:	e8 98 ff ff ff       	callq  401715 <fun7>
-  40177d:	83 f8 06             	cmp    $0x6,%eax
+  40176f:	77 27                	ja     401798 <secret_phase+0x49> #要求整数小于0x3e8 + 0x1 = 1751 
+  401771:	89 de                	mov    %ebx,%esi                  #fun7函数参数2：输入的整数
+  401773:	bf f0 50 40 00       	mov    $0x4050f0,%edi             #fun7函数参数1：一个地址
+  401778:	e8 98 ff ff ff       	callq  401715 <fun7>              #调用fun7
+  40177d:	83 f8 06             	cmp    $0x6,%eax                  #返回值需为6
   401780:	75 1d                	jne    40179f <secret_phase+0x50>
-  401782:	bf 88 31 40 00       	mov    $0x403188,%edi
+  401782:	bf 88 31 40 00       	mov    $0x403188,%edi             #隐藏阶段完成提示字符串
   401787:	e8 d4 f8 ff ff       	callq  401060 <puts@plt>
   40178c:	e8 29 03 00 00       	callq  401aba <phase_defused>
   401791:	48 83 c4 08          	add    $0x8,%rsp
