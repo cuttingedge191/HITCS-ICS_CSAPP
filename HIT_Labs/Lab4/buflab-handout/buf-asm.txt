@@ -703,9 +703,9 @@ Disassembly of section .text:
   4015d5:	48 83 ec 28          	sub    $0x28,%rsp     #栈空间40字节
   4015d9:	48 89 e7             	mov    %rsp,%rdi
   4015dc:	e8 f6 fa ff ff       	callq  4010d7 <Gets>  #调用Gets
-  4015e1:	b8 01 00 00 00       	mov    $0x1,%eax      #攻击不成功才会执行，返回1
+  4015e1:	b8 01 00 00 00       	mov    $0x1,%eax
   4015e6:	48 83 c4 28          	add    $0x28,%rsp
-  4015ea:	c3                   	retq   
+  4015ea:	c3                   	retq                  #取栈中返回地址转移控制，缓冲区溢出攻击的重要目标
 
 00000000004015eb <getbufn>:
   4015eb:	48 81 ec 08 02 00 00 	sub    $0x208,%rsp
