@@ -83,7 +83,7 @@ void initCache()
  */
 void freeCache()
 {
-    for (int i = 0; i < E; ++i)
+    for (int i = 0; i < S; ++i)
         free(cache[i]);
     free(cache);
 }
@@ -144,6 +144,8 @@ void accessData(mem_addr_t addr)
             max_index = i;
         }
     }
+    if (verbosity)
+        printf(" eviction");
     ++eviction_count;
     cache[addr_index][max_index].valid = 1;
     cache[addr_index][max_index].lru = lru_counter;
