@@ -110,7 +110,7 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
         for (int i = 0; i < 61; i = i + 16)
         {
             for (int j = 0; j < 67; j = j + 16)
-            {+
+            {
                 for (int k = j; k < j + 16 && k < 67; ++k)
                 {
                     for (int m = i; m < i + 16 && m < 61; ++m)
