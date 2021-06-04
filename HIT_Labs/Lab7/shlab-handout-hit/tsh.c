@@ -207,7 +207,7 @@ void eval(char *cmdline)
         if (pid == 0) {
         /* Child unblocks signals */
             if (sigprocmask(SIG_UNBLOCK, &mask, NULL) < 0)
-				unix_error("sigprocmask error");
+                unix_error("sigprocmask error");
 
         /* Each new job must get a new process group ID 
            so that the kernel doesn't send ctrl-c and ctrl-z
@@ -230,7 +230,7 @@ void eval(char *cmdline)
         the signals handlers can run again */
         addjob(jobs, pid, (bg == 1 ? BG : FG), cmdline);
         if (sigprocmask(SIG_UNBLOCK, &mask, NULL) < 0)
-			unix_error("sigprocmask error");
+            unix_error("sigprocmask error");
 
         if (!bg) 
             waitfg(pid);
@@ -411,14 +411,14 @@ void sigchld_handler(int sig)
     int status;
 
     if (sigfillset(&mask_all) < 0)
-		unix_error("sigfillset error");
+        unix_error("sigfillset error");
     /* 立即返回，检查已终止或被停止的进程
     回收所有僵死进程 */
     while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0)
     {
         // 阻塞所有信号
         if (sigprocmask(SIG_BLOCK, &mask_all, &prev) < 0)
-			unix_error("sigprocmask error");
+            unix_error("sigprocmask error");
         // 如果是正常终止的进程
         if (WIFEXITED(status))
             // 从作业列表中删除
@@ -441,7 +441,7 @@ void sigchld_handler(int sig)
         }
         // 解除阻塞
         if (sigprocmask(SIG_SETMASK, &prev, NULL) < 0)
-			unix_error("sigprocmask error");
+            unix_error("sigprocmask error");
     }
     // 恢复errno
     errno = olderrno;
@@ -461,10 +461,10 @@ void sigint_handler(int sig)
 
     // 假如存在前台作业，将信号传递给前台作业进程组
     if (pid)
-	{
-		if (kill(-pid, SIGINT) < 0)
-			unix_error("kill error");
-	}
+    {
+        if (kill(-pid, SIGINT) < 0)
+            unix_error("kill error");
+    }
 
     errno = olderrno; // 恢复errno
     return;
@@ -485,10 +485,10 @@ void sigtstp_handler(int sig)
 
     // 假如存在前台作业，将信号传递给前台作业进程组
     if (pid)
-	{
-		if (kill(-pid, SIGTSTP) < 0)
-			unix_error("kill error");
-	}
+    {
+        if (kill(-pid, SIGTSTP) < 0)
+            unix_error("kill error");
+    }
 
     errno = olderrno; // 恢复errno
     return;
