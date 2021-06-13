@@ -34,15 +34,15 @@
 /*
  * If NEXT_FIT defined use next fit search, else use first fit search 
  */
-#define NEXT_FITx
+#define NEXT_FIT
 
 /* Team structure */
 team_t team = {
     /* Team name */
 #ifdef NEXT_FIT
-    "implicit next fit", 
+    "1190200526--implicit next fit", 
 #else
-    "1190200526",
+    "1190200526--implicit first fit",
     /* First member's full name */ 
 #endif
     "Chengyou Shen",
@@ -334,6 +334,11 @@ static void *coalesce(void *bp)
         PUT(FTRP(NEXT_BLKP(bp)), PACK(size, 0));
         bp = PREV_BLKP(bp);
     }
+#ifdef NEXT_FIT
+    /* 针对下一次适配策略，避免rover指向合并后块中已经失效的位置 */
+    if ((rover > (char*)bp) && (rover < NEXT_BLKP(bp)))
+        rover = bp;
+#endif
     return bp;
 }
 
