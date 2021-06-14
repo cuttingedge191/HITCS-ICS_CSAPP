@@ -1,0 +1,274 @@
+启动:
+    gdb
+    gdb <file>  (例如 gdb try64 #try64是当前路径下要调试的可执行程序）
+    gdb -h 		(帮助，列出命令行选项)
+    gdb -tui <file> 多窗口GUI界面，例如： gdb -tui  try64 #try64是要调试的可执行程序
+退出:
+    quit 或 q 
+    Ctrl+D
+    注意: Ctrl+C 不从gdb退出，而是将当前当前gdb命令挂起。 例如输入 info all，然后按Ctrl+C，看看和不按Ctrl+C的区别
+    进入gdb之后,会有gdb的命令提示符，例如(gdb)
+    以下均为gdb的命令介绍，为简便，省去提示符(gdb)
+    
+★打开文件
+    file <exefilename>  打开可执行文件，例如 (gdb)file main
+
+★多窗口相关
+    layout src 标准的layout：源代码窗口在上，命令窗口在底部
+    layout asm 汇编窗口在上，cmd窗口在底部
+    layout split 三窗口：src窗口、asm窗口、cmd窗口
+    layout reg  打开寄存器窗口，在最后打开的src、asm窗口之上
+    tui reg general 或 tui r g 显示通用寄存器
+    tui reg float   或 tui r f  显示浮点寄存器
+    tui reg system  或 tui r sys   显示系统寄存器
+    tui reg next    显示下一页寄存器，用于显示general、float、system之外的寄存器，save restore sse....
+    fs/focus  WinName    WinName可以是 SRC/src/s  CMD/cmd/c  ASM/asm/a  REG/reg/r, next/n、prev/p(大小写均可，还可以用缩写）
+
+★断点
+    break FUNCTION	(set a breakpoint at the entry to the function)
+    break class::function或function(type,type) 
+    break filename:function 
+    break filename:linenum 
+    break *ADDRESS	(set a breakpoint at the specified address)
+
+    断点维护
+    clear  清除所有的已定义的断点。
+    clear function  清除所有设置在函数上的断点。
+    clear linenum   清除所有设置在指定行上的断点。
+    clear filename:linenum  清除所有设置在指定文件、指定行上的断点。
+
+    delete <NUM>    删除编号为NUM的断点
+    delete [breakpoints] [range...]删除指定的断点，breakpoints为断点号。如果不指定断点号，则表示删除所有的断点。range表示断点号的范围（如：3-7）。其简写命令为d。
+    比删除更好的一种方法是disable断点，disable了的断点，GDB不会删除，当你还需要时，enable即可，就好像回收站一样。
+
+    disable [breakpoints] [range...] disable所指定的断点，breakpoints为断点号。如果什么都不指定，表示disable所有的断点。简写命令是dis
+    disable <NUM>	disable 编号为NUM的断点
+
+    enable <NUM>    enable 编号为NUM的断点
+    enable [breakpoints] [range...]  enable所指定的断点，breakpoints为断点号。
+    enable [breakpoints] once range…  enable所指定的断点一次，当程序停止后，该断点马上被GDB自动disable。
+    enable [breakpoints] delete range…  enable所指定的断点一次，当程序停止后，该断点马上被GDB自动删除。
+
+★调试命令
+    run	 或 r 或者start (开始运行当前可执行文件)
+    kill 或 k   (停止对当前可执行文件的调试，类似关闭)
+    finish		(运行至当前函数返回——完成当前函数的运行)
+    stepi	    执行下一条汇编指令，如遇到函数调用，会进入被调用函数内部
+    stepi <NUM>	执行下NUM条汇编指令，相当于NUM次stepi
+    step 或 s	执行到下一个代码行(例如下一个c语句)，如遇到函数调用，会进入被调用函数内部
+    
+    nexti		执行下一条汇编指令，不会进入被调用函数内部
+    nexti <NUM>
+    
+    next 或 n   执行到下一个代码行，不会进入被调用函数内部
+    
+    advance <location>命令：执行到location处
+    until LOCATION	(继续运行，直到到达或超过LOCATION )
+
+    continue 或c	(继续)
+    continue <NUM>	(继续，忽略当前断点NUM次)
+
+
+    backtrace或bt	(print the current address and stack backtrace)
+    where		(print the current address and stack backtrace)
+    
+    带命令行参数运行
+    方法1： gdb启动时候加参数
+    gdb --args ./main aa bb
+    
+    方法2：先启动起来，run/r命令之后加参数
+    gdb main    
+    (gdb)run aaaa bb
+    
+    方法3：先启动起来，set args设置参数，之后用run/r运行
+     gdb main 
+    (gdb)set args aa bb
+    (gdb)run  
+    (gdb)show args
+    
+★查看寄存器
+    info reg 或者用简写 i  r, 查看通用寄存器、段寄存器、eflags
+    info all 或者用简写 i  r a,查看所有寄存器（包括浮点、多媒体）
+    查看某一寄存器:
+    info register rax
+    info register r8
+    i r esp
+    i r pc
+    
+    print /a $pc (print the program counter)
+    print $rsp	(print the stack pointer)
+    print $eax	(print the contents of %eax)
+    print/x $eax	(print the contents of %eax as hex)
+    print/a $eax	(print the contents of %eax as an address)
+    print/d $eax	(print the contents of %eax as decimal)
+    print/t $eax	(print the contents of %eax as binary)
+    print/c $eax	(print the contents of %eax as a character)
+    
+★查看程序反汇编代码 
+    set disassembly  intel   将反汇编设置成intel格式
+    set disassembly  att     将反汇编设置成att格式
+    disassemble或disas	(display the function around the current line)
+    disas ADDR 	(display the function around the address)
+    disas ADDR1 ADDR2 (display the function between the addresses)
+    disassemble /m main  看main的汇编代码，且c和asm一起排列
+    disassemble /r main  看main的汇编代码，显示16进制指令编码
+    
+★查看数据--print
+    print 0x100	(print decimal repr. of hex value输出10进制数值256)
+    print/x 555	(print hex repr. of decimal value输出16进制数值0x22b)
+    p/print/display (char *) &string1  #string1是字符串变量,查看字符串string1的数值
+    
+★自动显示信息 Autodisplaying information
+    display $eax(程序每次停止都显示%eax的内容，10进制)
+    display /x $eax(程序每次停止都显示%eax的内容,16进制)
+    display $rax
+    display		(输出自动显示条目的信息)
+    display/i $pc
+    
+    info display   查看display设置的自动显示的信息。 
+
+    undisplay dnums…      删除编号dnums...的自动显示
+    delete display dnums… 删除编号dnums...的自动显示    
+    disable display dnums…  不删除自动显示的设置，而只是让其失效
+    enable  display dnums…  恢复编号dnums...的自动显示
+    dnums意为所设置好了的自动显式的编号。如果要同时删除几个，编号可以用空格分隔，如果要删除一个范围内的编号，可以用减号表示（如：2-5）
+    
+
+
+★监视点/观察点
+    watch 为表达式（变量）expr设置一个观察点。当表达式值有变化时，马上停住程序。 
+    rwatch表达式（变量）expr被读时，停住程序。 
+    awatch 表达式（变量）的值被读或被写时，停住程序。 
+    info watchpoints列出当前所设置了的所有观察点。
+    watch i  每当i改变值时GDB就暂停
+
+★查看内存-examine命令
+  格式: x /nfu <addr>
+
+  说明：
+    x 是 examine 的缩写
+    n表示要显示的内存单元的个数
+    f表示显示方式, 可取如下值：
+        x 按十六进制格式显示变量(hex)。
+        d 按十进制格式显示变量(decimal)。
+        u 按十进制格式显示无符号整型(unsigned decimal)。
+        o 按八进制格式显示变量(octal)。
+        t 按二进制格式显示变量(binary)。
+        a 按十六进制格式显示变量(address)。
+        i 指令地址格式(instruction)
+        c 按字符格式显示变量(char)。
+        f 按浮点数格式显示变量(float)。
+        s 按字符串格式显示变量值(string)
+
+    u表示一个地址单元的长度, 可取如下值：
+        b表示单字节(byte)
+        h表示双字节(halfword)
+        w表示四字节(word)
+        g表示八字节(giant, 8 bytes)
+
+    举例：
+    x/3uh buf
+    表示从内存地址buf读取内容，
+    h表示以双字节为一个单位，
+    3表示三个单位，
+    u表示按十进制无符号数显示
+
+   例如：x/20xh   buffer	#buffer是缓冲区变量名字（汇编代码）
+★修改数值——set命令
+  例如:
+  set (i = 20)
+  set variable i=20
+  set $rax= 1  
+
+
+★ 生成core文件
+   linux命令：sudo gcore 3665  
+            生成名字为core.3665的core文件
+   gdb命令： gcore core-file-name
+   
+★ 用core调试程序
+   gdb ./your-prog   -core  core-file-path
+   bt
+   fr 0
+   fr 2
+   
+★dump指令：内存数据写入文件
+  dump [格式] memory 文件名 起始地址 结束地址 #  在 gdb 中，将指定内存段dump 保存到文件中
+  dump binary memory file start_addr end_addr 
+   
+  dump指令的 [格式]可以是：
+    binary      原始二进制格式
+    ihex        intel 16进制格式
+    srec        S-recored格式
+    tekhex      tektronix 16进制格式
+(gdb) dump binary memory my_binary_file.bin 0x22fd8a 0x22fd8a+450 
+  地址按C语言规则计算：地址+1，表示一个元素，共450个元素
+
+ dump [格式] value 文件名 表达式         #把指定值写到文件 
+
+ append [binary] memory 文件名 起始地址 结束地址 #按2进制追加到文件
+ append [binary] value 文件名 表达式  # 按2进制追加到文件
+    
+
+restore 文件名 [binary] bias 起始地址 结束地址 #   恢复文件中内容到内存.如果文件内容是原始二进制，需要指定binary参数，不然会gdb自动识别文件格式
+
+  
+    
+Useful information commands
+    help info
+    info program	(current status of the program)
+    info functions	(functions in program)
+    info stack      (backtrace of the stack)
+    info frame	(information about the current stack frame)
+    info scope 	(variables local to the scope)
+    info variables	(global and static variables)
+    info registers  (registers and their contents)
+    info breakpoints (status of user-settable breakpoints)
+    info address SYMBOL	(use for looking up addresses of functions)
+
+Running gdb in emacs
+    M-x gdb
+    C-h m to see the features of GDB mode
+★通用寄存器
+      有一组专用的gdb变量可以用来检查和修改计算机的通用寄存器，gdb提供了目前每一台计算机中实际使用的4个寄存器的标准名字：     
+  l   $pc   ：   程序计数器     
+  l   $fp   ：   帧指针（当前堆栈帧）     
+  l   $sp   ：   栈指针     
+  l   $ps   ：   处理器状态     
+    
+★绑定进程
+    attach PID  将gdb 附加到正在运行的进程PID上
+GDB提供了两种方式来调试正在运行的进程：一种是在GDB命令行上指定进程的PID，另一种是在GDB中使用“attach”命令。例如，先启动debugme程序，让其开始等待用户的输入。示例如下： 
+   >./debugme 
+     Enter a string to count words:
+ 接下去在另一个虚拟控制台中用下面的命令查出该进程对应的进程号： 
+  >ps -ax | grep debugme
+  555 pts/1 S 0:00 ./debugme
+得到进程的PID(555)后，就可以使用GDB对其进行调试了： 
+ >gdb debugme 555 
+  ...Attaching to program: /home/MyProg/debugme, process 555 Reading symbols from /lib/libc.so.6...done. ……
+ 在上面的输出信息中，以Attaching to program 开始的行表明GDB已经成功地附加在PID为555的进程上了。 另外一种连接到其它进程的方法是先用file命令加载调试时所需的符号表，然后再通过”attache”命令进行连接： 
+ (gdb) file /home/MyProg/debugme 
+  Reading symbols from /home/MyProg/debugme...done. 
+ (gdb) attach 555 ……
+
+★内存搜索
+Usage:
+ find [/sn] start_addr, +len,val1[,val2,...]
+ find [/sn] start_addr, end_addr,val1[,val2,...]
+  s,搜索尺寸， b-字节  h-2字节halfword w-四字节 g-8字节
+  n, 搜索结果的最大数量，默认搜索所有结果
+  find /b &varx, &vary, 0x34
+  find /b &varx, &vary, 0
+  find /b &varx, +40, 0x34
+(gdb) define find                             
+set $ptr = $arg0
+set $cnt = 0
+while ( ($ptr<=$arg1) && ($cnt<$arg2) )
+    if ( *(unsigned int *)$ptr == $arg3 )
+        x /wx $ptr
+        set $cnt = $cnt + 1
+    end
+    set $ptr = $ptr + 4
+end
+end
