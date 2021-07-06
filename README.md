@@ -1,9 +1,13 @@
 # HITCS-ICS_CSAPP
+
+## 简介
+
+此仓库为哈尔滨工业大学（本部）计算机系统课程相关资料。
+
 ## 仓库内容
- - 哈尔滨工业大学计算机系统课程实验、平时作业及大作业（2021春，大二下学期）
- - CSAPP:3e CMU（卡内基梅隆大学）部分实验
-## 仓库结构
- - [CMU_Labs](https://github.com/cuttingedge191/HITCS-ICS_CSAPP/tree/main/CMU_Labs)：本人假期预习时~~所完成~~的部分CMU实验
- - [HIT_Homework](https://github.com/cuttingedge191/HITCS-ICS_CSAPP/tree/main/HIT_Homework)：HIT计算机系统课程平时作业、大作业
- - [HIT_Labs](https://github.com/cuttingedge191/HITCS-ICS_CSAPP/tree/main/HIT_Labs)：HIT计算机系统课程实验
+ - [Final Exams](https://github.com/cuttingedge191/HITCS-ICS_CSAPP/tree/main/Final%20Exams)：哈工大计算机系统课程历年期末相关
+ - [Homework](https://github.com/cuttingedge191/HITCS-ICS_CSAPP/tree/main/Homework)：哈工大计算机系统课程平时作业、大作业
+ - [Labs](https://github.com/cuttingedge191/HITCS-ICS_CSAPP/tree/main/Labs)：哈工大计算机系统课程实验
+ - [Labs_CMU](https://github.com/cuttingedge191/HITCS-ICS_CSAPP/tree/main/Labs_CMU)：本人假期预习时~~所完成~~的部分CMU实验
+ - [PPTs](https://github.com/cuttingedge191/HITCS-ICS_CSAPP/tree/main/PPTs)：哈工大计算机系统课程2021年课件
 
